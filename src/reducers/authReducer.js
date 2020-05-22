@@ -1,9 +1,7 @@
-import {
-    LOGGED
-  } from '../actions/types';
+import { LOGGED } from '../actions/types';
 
 const INITIAL_STATE = {
-    logged: 'false'
+    logged: false
 };
 
 export default (state = INITIAL_STATE, action) => {
