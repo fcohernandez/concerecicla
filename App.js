@@ -6,7 +6,6 @@ import Index from './src/screens/Index';
 
 const store = configureStore();
 
-
 export default function App() {
   return (
     <Provider store={store}>

@@ -6,7 +6,7 @@ import { login } from '../../actions/authAction';
 import FacebookIcon from '../../../assets/facebookIcon.svg';
 import GoogleIcon from '../../../assets/googleIcon.svg';
 
-const Login = () => {
+const Login = ({ navigation }) => {
 
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
@@ -34,7 +34,7 @@ const Login = () => {
                     style = {styles.input}
                     value = {email}
                     onChangeText = {text => setEmail(text)}
-                    placeholder = "Correo"
+                    placeholder = "Correo electrónico"
                 />
                 <TextInput 
                     style = {styles.input}
@@ -48,7 +48,9 @@ const Login = () => {
                 >
                     <Text style = { styles.textLogin }>Iniciar Sesión</Text>
                 </TouchableOpacity>
-                <Text style={ styles.textForgetPwd }>Olvidé mi contraseña</Text>
+                <TouchableOpacity onPress = { () => Alert.alert('Recuperar contraseña')}>
+                    <Text style={ styles.textForgetPwd }>Olvidé mi contraseña</Text>
+                </TouchableOpacity>
                 <Text style = { styles.textNoAccount }>¿No tienes cuenta?</Text>
                 <View style = {styles.socialContainer}>
                     <TouchableOpacity style = {styles.marginLogos} onPress={()=>logFacebook()}>
@@ -58,7 +60,11 @@ const Login = () => {
                         <GoogleIcon width={80} height={80} />
                     </TouchableOpacity>
                 </View>
-                <Text style = { styles.textRegister } onPress = {()=>Alert.alert('Navegar a registrarse')}>Registrarme</Text>
+                <TouchableOpacity onPress = { () => navigation.navigate('register') }>
+                    <Text style = { styles.textRegister }>
+                        Registrarme
+                    </Text>
+                </TouchableOpacity>
             </ImageBackground>    
         </View>
     );
@@ -92,7 +98,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         margin: 10,
         paddingLeft: 20,
-        textDecorationColor: '#333'
     },
     loginButton: {
         backgroundColor: '#4f4085',
