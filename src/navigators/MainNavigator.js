@@ -12,9 +12,7 @@ const MainNavigator = () => {
     
     const logged = useSelector(state => state.authReducer.logged)
     const title = useSelector(state => state.headerReducer.title)
-
-    console.log(title)
-
+    
     return(
         <Stack.Navigator 
             screenOptions={{ 
