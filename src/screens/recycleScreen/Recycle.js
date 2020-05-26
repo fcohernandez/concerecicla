@@ -1,67 +1,35 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import { View, StyleSheet, Text} from 'react-native';
 
-import Card from './components/Card';
+import Canasta from './Canasta';
+import Historial from './Historial';
 
 const Recycle = () => {
 
-    const [paperCount, setPaperCount] = useState(0)
-    const [glassCount, setGlassCount] = useState(0)
-    const [batteryCount, setBatteryCount] = useState(0)
-    const [organicCount, setOrganicCount] = useState(0)
-    const [plasticCount, setPlasticCount] = useState(0)
+    const [opacityCanasta, setOpacityCanasta] = useState(1)
+    const [opacityHistorial, setOpacityHistorial] = useState(0.3)
+    const [canastaScreen, setCanastaScreen] = useState(true)
+
+    const changeOpacityCanasta = () => {
+         setOpacityCanasta(1)
+         setOpacityHistorial(0.3)
+         setCanastaScreen(true)
+    }
+
+    const changeOpacityHistorial = () => {
+        setOpacityCanasta(0.3)
+        setOpacityHistorial(1)
+        setCanastaScreen(false)
+    }
 
     return(
         <View style = {styles.container}>
-            <View style = {styles.rowContainerTop}>
-                <Card 
-                    count = {paperCount} 
-                    setCount = {setPaperCount}
-                    icon = {'newspaper'}
-                    text = {'Papeles y cartones'}
-                    svg = {false}
-                    color = {'#e56e25'}
-                />
-                <Card 
-                    count = {glassCount} 
-                    setCount = {setGlassCount}
-                    icon = {'wine-bottle'}
-                    text = {'Vidrios'}
-                    svg = {false}
-                    color = {'#4eb966'}
-                />
+            <View style = {{flexDirection: 'row', justifyContent: 'center'}}>
+                <Text onPress = {() => changeOpacityCanasta()} style = {[styles.headerText, {opacity: opacityCanasta}]}>Canasta</Text>
+                <Text onPress = {() => changeOpacityHistorial()} style = {[styles.headerText, {opacity: opacityHistorial}]}>Historial</Text>
             </View>
-            <View style = {styles.rowContainer}>
-                <Card 
-                    count = {batteryCount} 
-                    setCount = {setBatteryCount}
-                    icon = {'car-battery'}
-                    text = {'Baterías'}
-                    svg = {false}
-                    color = {'#3ba3d2'}
-                />
-                <Card 
-                    count = {organicCount} 
-                    setCount = {setOrganicCount}
-                    icon = {'organic'}
-                    text = {'Desechos orgánicos'}
-                    svg = {true}
-                />
-            </View>
-            <View style = {styles.rowContainer}>
-                <Card 
-                    count = {plasticCount} 
-                    setCount = {setPlasticCount}
-                    icon = {'plastic'}
-                    text = {'Plásticos'}
-                    svg = {true}
-                />
-            </View>
-            <View style = {{alignItems: 'center'}}>
-                <TouchableOpacity style = {styles.recycleButton}>
-                    <Text style = {{color: '#fff', fontSize: 28}}>Reciclar</Text>
-                </TouchableOpacity>
-            </View>
+            { canastaScreen ? <Canasta/> : <Historial/>}
+            
         </View>
     );
 }
@@ -71,25 +39,11 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#ecf4f3',
     },
-    rowContainerTop: {
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        marginTop: 60
-    },
-    rowContainer: {
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        marginTop: 15
-    },
-    recycleButton: {
-        backgroundColor: '#4f4085',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 60,
-        width: 200,
-        marginTop: 15,
-        borderRadius: 18
-    },
+    headerText: {
+        color: '#333', 
+        fontSize: 28, 
+        marginRight: 10
+    }
   });
 
   export default Recycle;
