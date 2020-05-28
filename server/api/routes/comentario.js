@@ -1,12 +1,14 @@
 const express = require('express')
-const Material = require('../models/material')
+const Comentario = require('../models/comentario')
+
+const isAuthenticated = require('../auth')
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
-    
-    Material.find({})
-        .exec((err, materiales) => {
+
+    Comentario.find({})
+        .exec((err, comentarios) => {
             if(err){
                 return res.status(400).json({
                     ok: false,
@@ -16,21 +18,22 @@ router.get('/', (req, res) => {
 
             res.json({
                 ok: true,
-                materiales
+                comentarios
             })
         })
 
 })
 
-router.post('/', (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
     let body = req.body
 
-    let material = new Material({
-        nombre: body.nombre,
-        id: body.id
+    let comentario = new Comentario({
+        userId: req.user._id,
+        puntoId: body.puntoId,
+        descripcion: body.descripcion
     })
 
-    material.save( (err, materialDB) => {
+    comentario.save( (err, comentarioDB) => {
         if(err){
             return res.status(400).json({
                 ok: false,
@@ -40,7 +43,7 @@ router.post('/', (req, res) => {
 
         res.json({
             ok: true,
-            material: materialDB
+            comentario: comentarioDB
         })
     })
 
@@ -51,7 +54,7 @@ router.put('/:id', (req, res) => {
     let id = req.params.id
     let body = req.body
 
-    Material.findByIdAndUpdate(id, body, {new: true}, (err, materialDB) => {
+    Comentario.findByIdAndUpdate(id, body, {new: true}, (err, comentarioDB) => {
         if(err){
             return res.status(400).json({
                 ok: false,
@@ -61,7 +64,7 @@ router.put('/:id', (req, res) => {
 
         res.json({
             ok: true,
-            material: materialDB
+            comentario: comentarioDB
         })
     })
 
@@ -71,7 +74,7 @@ router.delete('/:id', (req, res) => {
     
     let id = req.params.id
 
-    Material.findByIdAndRemove(id, (err, materialBorrado) => {
+    Comentario.findByIdAndRemove(id, (err, comentarioBorrado) => {
         if(err){
             return res.status(400).json({
                 ok: false,
@@ -81,10 +84,10 @@ router.delete('/:id', (req, res) => {
 
         res.json({
             ok: true,
-            material: materialBorrado
+            comentario: comentarioBorrado
         })
     })
 
 })
 
-module.exports = router
+module.exports = router;

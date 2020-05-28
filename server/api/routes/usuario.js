@@ -2,9 +2,9 @@ const express = require('express')
 const bcrypt = require('bcrypt');
 const Usuario = require('../models/usuario')
 
-const app = express()
+const router = express.Router()
 
-app.get('/usuario', (req, res) => {
+router.get('/', (req, res) => {
     
     Usuario.find({})
         .exec((err, usuarios) => {
@@ -23,7 +23,7 @@ app.get('/usuario', (req, res) => {
 
 })
 
-app.post('/usuario', (req, res) => {
+router.post('/', (req, res) => {
     let body = req.body
 
     let usuario = new Usuario({
@@ -49,7 +49,7 @@ app.post('/usuario', (req, res) => {
 
 })
 
-app.put('/usuario/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     
     let id = req.params.id
     let body = req.body
@@ -70,7 +70,7 @@ app.put('/usuario/:id', (req, res) => {
 
 })
 
-app.delete('/usuario/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     
     let id = req.params.id
 
@@ -90,4 +90,4 @@ app.delete('/usuario/:id', (req, res) => {
 
 })
 
-module.exports = app;
+module.exports = router

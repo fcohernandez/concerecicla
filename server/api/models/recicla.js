@@ -7,7 +7,7 @@ let reciclaSchema = new Schema({
         type: Schema.Types.ObjectId, ref: 'Usuario'
     },
     materialId: [
-        {type: Schema.Types.ObjectId, ref: 'PuntoLimpio'}
+        {type: String, ref: 'PuntoLimpio'}
     ],
     fecha: {
         type: Date,

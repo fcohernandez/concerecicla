@@ -1,9 +1,9 @@
 const express = require('express')
 const PuntoLimpio = require('../models/puntoLimpio')
 
-const app = express()
+const router = express.Router()
 
-app.get('/puntos', (req, res) => {
+router.get('/', (req, res) => {
     
     PuntoLimpio.find({})
         .exec((err, puntos) => {
@@ -22,7 +22,7 @@ app.get('/puntos', (req, res) => {
 
 })
 
-app.post('/puntos', (req, res) => {
+router.post('/', (req, res) => {
     let body = req.body
 
     let puntoLimpio = new PuntoLimpio({
@@ -48,7 +48,7 @@ app.post('/puntos', (req, res) => {
 
 })
 
-app.put('/puntos/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     
     let id = req.params.id
     let body = req.body
@@ -69,7 +69,7 @@ app.put('/puntos/:id', (req, res) => {
 
 })
 
-app.delete('/puntos/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
     
     let id = req.params.id
 
@@ -89,4 +89,4 @@ app.delete('/puntos/:id', (req, res) => {
 
 })
 
-module.exports = app;
+module.exports = router

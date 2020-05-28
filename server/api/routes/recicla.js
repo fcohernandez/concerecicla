@@ -1,12 +1,12 @@
 const express = require('express')
-const Material = require('../models/material')
+const Recicla = require('../models/recicla')
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
     
-    Material.find({})
-        .exec((err, materiales) => {
+    Recicla.find({})
+        .exec((err, reciclajes) => {
             if(err){
                 return res.status(400).json({
                     ok: false,
@@ -16,7 +16,28 @@ router.get('/', (req, res) => {
 
             res.json({
                 ok: true,
-                materiales
+                reciclajes
+            })
+        })
+
+})
+
+router.get('/:id', (req, res) => {
+
+    let id = req.params.id
+    
+    Recicla.findById(id)
+        .exec((err, reciclajes) => {
+            if(err){
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            res.json({
+                ok: true,
+                reciclajes
             })
         })
 
@@ -25,12 +46,12 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     let body = req.body
 
-    let material = new Material({
-        nombre: body.nombre,
-        id: body.id
+    let recicla = new Recicla({
+        userId: body.userId,
+        materialId: body.materialId
     })
 
-    material.save( (err, materialDB) => {
+    recicla.save( (err, reciclaDB) => {
         if(err){
             return res.status(400).json({
                 ok: false,
@@ -40,7 +61,7 @@ router.post('/', (req, res) => {
 
         res.json({
             ok: true,
-            material: materialDB
+            recicla: reciclaDB
         })
     })
 
@@ -51,7 +72,7 @@ router.put('/:id', (req, res) => {
     let id = req.params.id
     let body = req.body
 
-    Material.findByIdAndUpdate(id, body, {new: true}, (err, materialDB) => {
+    Recicla.findByIdAndUpdate(id, body, {new: true}, (err, reciclaDB) => {
         if(err){
             return res.status(400).json({
                 ok: false,
@@ -61,7 +82,7 @@ router.put('/:id', (req, res) => {
 
         res.json({
             ok: true,
-            material: materialDB
+            recicla: reciclaDB
         })
     })
 
@@ -71,7 +92,7 @@ router.delete('/:id', (req, res) => {
     
     let id = req.params.id
 
-    Material.findByIdAndRemove(id, (err, materialBorrado) => {
+    MutationRecord.findByIdAndRemove(id, (err, reciclaBorrado) => {
         if(err){
             return res.status(400).json({
                 ok: false,
@@ -81,7 +102,7 @@ router.delete('/:id', (req, res) => {
 
         res.json({
             ok: true,
-            material: materialBorrado
+            recicla: reciclaBorrado
         })
     })
 
