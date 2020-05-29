@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, TextInput, Alert, Image } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Alert, SafeAreaView, StyleSheet,
+    Text, TextInput, TouchableWithoutFeedback, View, ImageBackground, Image, AsyncStorage } from "react-native";
 import { useDispatch } from 'react-redux';
 
 import { login } from '../../actions/authAction';
@@ -15,58 +16,100 @@ const Register = () => {
     const dispatch = useDispatch();
 
     const log = () => {
-        dispatch(login(true))
+        fetch('http://192.168.18.169:3000/register', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                password: pwd,
+                nombre: name,
+                apellido: lastname
+            })
+        })
+        .then(response => response.json())  // promise
+        .then(json => {
+            if(!json.ok){
+                return Alert.alert(json.msg)
+            }
+
+            AsyncStorage.setItem('@token', json.token, (res, err) => {
+                if(err){
+                    console.log(err)
+                }
+                dispatch(login(true))
+           }) 
+        })
     }
 
     return(
-        <View style = {styles.container}>
-            <ImageBackground source={require('../../../assets/loginBackgroud.png')} style={styles.image}>
-                <Image source={require('../../../assets/logoRecycle.png')} style={styles.logo}/>
-                <Text style={styles.textLogo}>CONCE RECICLA</Text>
-                <TextInput
-                    style = {styles.input}
-                    value = {name}
-                    onChangeText = {text => setName(text)}
-                    placeholder = "Nombre"
-                />
-                <TextInput
-                    style = {styles.input}
-                    value = {lastname}
-                    onChangeText = {text => setLastName(text)}
-                    placeholder = "Apellido"
-                />
-                <TextInput
-                    style = {styles.input}
-                    value = {email}
-                    onChangeText = {text => setEmail(text)}
-                    placeholder = "Correo electrónico"
-                />
-                <TextInput
-                    style = {styles.input}
-                    value = {pwd}
-                    onChangeText = {text => setPwd(text)}
-                    placeholder = "Contraseña"
-                />
-                <TextInput
-                    style = {styles.input}
-                    value = {confirmPwd}
-                    onChangeText = {text => setConfirmPwd(text)}
-                    placeholder = "Confirmar contraseña"
-                />
-                <TouchableOpacity 
-                    style = {styles.loginButton}
-                    onPress={ () => log()}
-                >
-                    <Text style = { styles.textLogin }>Registrarme</Text>
-                </TouchableOpacity>
-            </ImageBackground>    
-        </View>
+        <ImageBackground source={require('../../../assets/loginBackgroud.png')} style={styles.image}>
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+            >
+                <SafeAreaView style={styles.container}>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={styles.inner}>
+                            <Image source = {require('../../../assets/logoRecycle.png')} style = {styles.logo}/>
+                            <Text style={styles.textLogo}>
+                                Conce Recicla
+                            </Text>
+                            <TextInput
+                                placeholder="Nombre"
+                                style={styles.input}
+                                value ={name}
+                                onChangeText = {text => setName(text)}
+                            />
+                            <TextInput
+                                placeholder="Apellido"
+                                style={styles.input}
+                                value = {lastname}
+                                onChangeText = {text => setLastName(text)}
+                            />
+                            <TextInput
+                                placeholder="Correo Electrónico"
+                                style={styles.input}
+                                value = {email}
+                                onChangeText = {text => setEmail(text)}
+                                autoCapitalize = 'none'
+                            />
+                            <TextInput
+                                placeholder="Contraseña"
+                                style={styles.input}
+                                value = {pwd}
+                                onChangeText = {text => setPwd(text)}
+                            />
+                            <TextInput
+                                placeholder="Confirmar contraseña"
+                                style={styles.input}
+                                value = {confirmPwd}
+                                onChangeText = {text => setConfirmPwd(text)}
+                            />
+                            <View style={styles.loginButton}>
+                                <Text style={styles.textLogin} onPress={() => log()} > Registrarme </Text>
+                            </View>
+                            <View style={{ flex : 1 }} />
+                        </View>
+                        </TouchableWithoutFeedback>
+                </SafeAreaView>
+            </KeyboardAvoidingView>
+        </ImageBackground>
+           
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        marginTop: 10
+    },
+    inner: {
+        padding: 24,
+        flex: 1,
+        justifyContent: "flex-end",
+        alignItems: 'center'
     },
     image: {
         flex: 1,
@@ -91,7 +134,7 @@ const styles = StyleSheet.create({
         color: '#fff', 
         fontStyle: 'italic', 
         fontWeight: 'bold',
-        marginBottom: 25
+        marginBottom: 10
     },
     loginButton: {
         backgroundColor: '#4f4085',
@@ -100,7 +143,8 @@ const styles = StyleSheet.create({
         height: 45,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10
+        marginTop: 10,
+        alignSelf: 'center'
     },
     textLogin: {
         fontSize: 20,

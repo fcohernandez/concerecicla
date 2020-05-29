@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, TextInput, Alert, Image } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, TextInput, Alert, Image, AsyncStorage } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { login } from '../../actions/authAction';
@@ -14,8 +14,32 @@ const Login = ({ navigation }) => {
     const dispatch = useDispatch();
 
     const log = () => {
-        dispatch(login(true))
+        fetch('http://192.168.18.169:3000/login', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email,
+                password: pwd
+            })
+        })
+        .then(response => response.json())  // promise
+        .then(json => {
+            if(!json.ok){
+                return Alert.alert(json.msg)
+            }
+
+            AsyncStorage.setItem('@token', json.token, (res, err) => {
+                if(err){
+                    console.log(err)
+                }
+                dispatch(login(true))
+           }) 
+        })
     }
+    
 
     const logFacebook = () => {
         Alert.alert("Login con facebook")
@@ -35,12 +59,15 @@ const Login = ({ navigation }) => {
                     value = {email}
                     onChangeText = {text => setEmail(text)}
                     placeholder = "Correo electrónico"
+                    autoCapitalize = 'none'
                 />
                 <TextInput 
                     style = {styles.input}
                     value = {pwd}
                     onChangeText = {text => setPwd(text)}
                     placeholder = "Contraseña"
+                    autoCapitalize = 'none'
+                    secureTextEntry={true}
                 />
                 <TouchableOpacity 
                     style = {styles.loginButton}

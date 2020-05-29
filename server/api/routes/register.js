@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
         if(usuarioDB){
             return res.json({
                 ok: true,
-                msg: 'usuario ya existe'
+                msg: 'El correo electrónico ya está en uso'
             })
         }
 
@@ -36,6 +36,7 @@ router.post('/', (req, res) => {
             if(err){
                 return res.status(400).json({
                     ok: false,
+                    msg: 'Error al crear usuario',
                     err
                 })
             }
@@ -46,7 +47,7 @@ router.post('/', (req, res) => {
     
             return res.json({
                 ok: true,
-                msg: 'usuario creado con éxito',
+                msg: 'Usuario creado con éxito',
                 token
             })
         })

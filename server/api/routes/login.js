@@ -21,7 +21,7 @@ router.post('/', (req, res) => {
         if(!usuarioDB){
             return res.json({
                 ok: false,
-                msg: 'usuario y/o contraseña incorrecto'
+                msg: 'Usuario y/o contraseña incorrectos'
             })
         }
 
@@ -33,14 +33,14 @@ router.post('/', (req, res) => {
 
             return res.json({
                 ok: true,
-                msg: 'login exitoso',
+                msg: 'Login exitoso!',
                 token
             })
         }
 
         return res.json({
             ok: false,
-            msg: 'usuario y/o contraseña incorrecto'
+            msg: 'Usuario y/o contraseña incorrectos'
         })
 
     })
