@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, TextInput, Alert, Image, AsyncStorage } from 'react-native';
 import { useDispatch } from 'react-redux';
 import * as Google from 'expo-google-app-auth';
-import Expo from "expo";
+import * as Facebook from 'expo-facebook';
 
 import { login } from '../../actions/authAction';
 import FacebookIcon from '../../../assets/facebookIcon.svg';
@@ -12,17 +12,11 @@ const Login = ({ navigation }) => {
 
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
-    const [user, setUser] = useState('')
-
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        
-    }, [])
-
     const log = () => {
-        fetch(`http://192.168.18.169:3000/login/${type}`, {
+        fetch(`http://192.168.18.169:3000/login`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -49,8 +43,59 @@ const Login = ({ navigation }) => {
     }
     
 
-    const logFacebook = () => {
-        Alert.alert("Login con facebook")
+    const logFacebook = async() => {
+        try {
+            await Facebook.initializeAsync('561770824753219');
+            const {
+              type,
+              token,
+              expires,
+              permissions,
+              declinedPermissions,
+            } = await Facebook.logInWithReadPermissionsAsync({
+              permissions: ['public_profile', 'email'],
+            });
+            if (type === 'success') {
+              // Get the user's name using Facebook's Graph API
+              let response = await fetch(`https://graph.facebook.com/me?access_token=${token}&fields=email,first_name, last_name`);
+              let user = await response.json()
+              const facebookUser = {
+                  nombre: user.first_name,
+                  apellido: user.last_name,
+                  email: user.email,
+                  facebook: false
+              }
+
+            fetch(`http://192.168.18.169:3000/login/facebook`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    facebookUser
+                })
+            })
+            .then(response => response.json())  // promise
+            .then(json => {
+                if(!json.ok){
+                    return Alert.alert(json.msg)
+                }
+
+                AsyncStorage.setItem('@token', json.token, (res, err) => {
+                    if(err){
+                        console.log(err)
+                    }
+                    dispatch(login(true))
+                }) 
+
+            })  
+            } else {
+              // type === 'cancel'
+            }
+          } catch ({ message }) {
+            alert(`Facebook Login Error: ${message}`);
+          }
     }
 
     const logGoogle = async () => {
@@ -77,7 +122,12 @@ const Login = ({ navigation }) => {
                     return Alert.alert(json.msg)
                 }
 
-                console.log(json)
+                AsyncStorage.setItem('@token', json.token, (res, err) => {
+                    if(err){
+                        console.log(err)
+                    }
+                    dispatch(login(true))
+               }) 
             })
         }
     }

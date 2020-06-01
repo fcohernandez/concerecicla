@@ -18,7 +18,17 @@ let usuarioSchema = new Schema({
     password: {
         type: String,
         required: [true, 'Es necesaria una contraseña']
-    }
+    },
+    google: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
+    facebook: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
 });
 
 module.exports = mongoose.model('Usuario', usuarioSchema);
