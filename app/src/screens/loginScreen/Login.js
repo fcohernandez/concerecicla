@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, TextInput, Alert, Image, AsyncStorage } from 'react-native';
 import { useDispatch } from 'react-redux';
+import * as Google from 'expo-google-app-auth';
+import Expo from "expo";
 
 import { login } from '../../actions/authAction';
 import FacebookIcon from '../../../assets/facebookIcon.svg';
@@ -10,11 +12,17 @@ const Login = ({ navigation }) => {
 
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
+    const [user, setUser] = useState('')
+
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        
+    }, [])
+
     const log = () => {
-        fetch('http://192.168.18.169:3000/login', {
+        fetch(`http://192.168.18.169:3000/login/${type}`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -22,7 +30,7 @@ const Login = ({ navigation }) => {
             },
             body: JSON.stringify({
                 email,
-                password: pwd
+                password: pwd,
             })
         })
         .then(response => response.json())  // promise
@@ -45,8 +53,33 @@ const Login = ({ navigation }) => {
         Alert.alert("Login con facebook")
     }
 
-    const logGoogle = () => {
-        Alert.alert("Login con google")
+    const logGoogle = async () => {
+        
+        const result = await Google.logInAsync({
+            androidClientId: "734561156669-9nbm9s134flktjil540qf7osqm1ig7km.apps.googleusercontent.com",
+            scopes: ['profile', 'email'],
+        })
+        
+        if (result.type === 'success') {
+            fetch(`http://192.168.18.169:3000/login/google`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    googleToken: result.idToken
+            })
+            })
+            .then(response => response.json())  // promise
+            .then(json => {
+                if(!json.ok){
+                    return Alert.alert(json.msg)
+                }
+
+                console.log(json)
+            })
+        }
     }
 
     return(
