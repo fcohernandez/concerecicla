@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import { Keyboard, KeyboardAvoidingView, Alert, SafeAreaView, StyleSheet,
-    Text, TextInput, TouchableWithoutFeedback, View, ImageBackground, Image, AsyncStorage } from "react-native";
+    Text, TextInput, TouchableWithoutFeedback, View, ImageBackground, Image, AsyncStorage, TouchableOpacity } from "react-native";
 import { useDispatch } from 'react-redux';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import { login } from '../../actions/authAction';
 
@@ -12,10 +13,18 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [pwd, setPwd] = useState('');
     const [confirmPwd, setConfirmPwd] = useState('');
+    const [validEmail, setValidEmail] = useState(true)
+    const [pwdMatch, setpwdMatch] = useState(true)
+    const [seePwd, setSeePwd] = useState(true)
 
     const dispatch = useDispatch();
 
     const log = () => {
+
+        if(!pwdMatch){
+            return Alert.alert("contraseñas no coinciden")
+        }
+
         fetch('http://192.168.18.169:3000/register', {
             method: 'POST',
             headers: {
@@ -44,6 +53,27 @@ const Register = () => {
         })
     }
 
+    const validate = (text) => {
+        console.log(text);
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (reg.test(text) === false) {
+          setEmail(text)
+          setValidEmail(false)
+        }
+        else {
+          setEmail(text)
+          setValidEmail(true)
+        }
+    }
+
+    const validatePassword = () => {
+        if(pwd == confirmPwd){
+            setpwdMatch(true)
+        }else{
+            setpwdMatch(false)
+        }
+    }
+
     return(
         <ImageBackground source={require('../../../assets/loginBackgroud.png')} style={styles.image}>
             <KeyboardAvoidingView
@@ -70,22 +100,32 @@ const Register = () => {
                             />
                             <TextInput
                                 placeholder="Correo Electrónico"
-                                style={styles.input}
+                                style={ validEmail ? styles.input : styles.inputWrong}
                                 value = {email}
-                                onChangeText = {text => setEmail(text)}
+                                onChangeText = {text => validate(text)}
                                 autoCapitalize = 'none'
                             />
-                            <TextInput
-                                placeholder="Contraseña"
-                                style={styles.input}
-                                value = {pwd}
-                                onChangeText = {text => setPwd(text)}
-                            />
+                            <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                                <TextInput 
+                                    style = {styles.inputpwd}
+                                    value = {pwd}
+                                    onChangeText = {text => setPwd(text)}
+                                    placeholder = "Contraseña"
+                                    autoCapitalize = 'none'
+                                    secureTextEntry={seePwd}
+                                />
+                                <TouchableOpacity onPress ={()=> setSeePwd(!seePwd)}>
+                                    <FontAwesome5 name={seePwd ? "eye" : "eye-slash"} color={'#fff'} size={24} />
+                                </TouchableOpacity>
+                            </View>
                             <TextInput
                                 placeholder="Confirmar contraseña"
-                                style={styles.input}
+                                style={ pwdMatch ? styles.input : styles.inputWrong}
                                 value = {confirmPwd}
                                 onChangeText = {text => setConfirmPwd(text)}
+                                onBlur = {() => validatePassword()}
+                                autoCapitalize = 'none'
+                                secureTextEntry={seePwd}
                             />
                             <View style={styles.loginButton}>
                                 <Text style={styles.textLogin} onPress={() => log()} > Registrarme </Text>
@@ -124,6 +164,25 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         margin: 10,
         paddingLeft: 20,
+    },
+    inputpwd: {
+        backgroundColor: '#fff',
+        height: 40, 
+        width: 250,
+        borderRadius: 20,
+        margin: 10,
+        paddingLeft: 20,
+        marginLeft: 40
+    },
+    inputWrong: {
+        backgroundColor: '#fff',
+        height: 40, 
+        width: 250,
+        borderRadius: 20,
+        margin: 10,
+        paddingLeft: 20,
+        borderWidth: 1.5,
+        borderColor: '#f21'
     },
     logo: {
         height: 220, 

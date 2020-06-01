@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, ImageBackground, TextInput, A
 import { useDispatch } from 'react-redux';
 import * as Google from 'expo-google-app-auth';
 import * as Facebook from 'expo-facebook';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import { login } from '../../actions/authAction';
 import FacebookIcon from '../../../assets/facebookIcon.svg';
@@ -12,6 +13,7 @@ const Login = ({ navigation }) => {
 
     const [email, setEmail] = useState('')
     const [pwd, setPwd] = useState('')
+    const [seePwd, setSeePwd] = useState(true)
 
     const dispatch = useDispatch();
 
@@ -144,14 +146,19 @@ const Login = ({ navigation }) => {
                     placeholder = "Correo electrónico"
                     autoCapitalize = 'none'
                 />
-                <TextInput 
-                    style = {styles.input}
-                    value = {pwd}
-                    onChangeText = {text => setPwd(text)}
-                    placeholder = "Contraseña"
-                    autoCapitalize = 'none'
-                    secureTextEntry={true}
-                />
+                <View style = {{flexDirection: 'row', alignItems: 'center'}}>
+                    <TextInput 
+                        style = {styles.inputpwd}
+                        value = {pwd}
+                        onChangeText = {text => setPwd(text)}
+                        placeholder = "Contraseña"
+                        autoCapitalize = 'none'
+                        secureTextEntry={seePwd}
+                    />
+                    <TouchableOpacity onPress ={()=> setSeePwd(!seePwd)}>
+                        <FontAwesome5 name={seePwd ? "eye" : "eye-slash"} color={'#fff'} size={24} />
+                    </TouchableOpacity>
+                </View>
                 <TouchableOpacity 
                     style = {styles.loginButton}
                     onPress={ () => log()}
@@ -204,10 +211,19 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: '#fff',
         height: 40, 
-        width: 250,
+        width: 240,
         borderRadius: 20,
         margin: 10,
         paddingLeft: 20,
+    },
+    inputpwd: {
+        backgroundColor: '#fff',
+        height: 40, 
+        width: 240,
+        borderRadius: 20,
+        margin: 10,
+        paddingLeft: 20,
+        marginLeft: 35
     },
     loginButton: {
         backgroundColor: '#4f4085',
