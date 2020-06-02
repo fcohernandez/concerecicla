@@ -13,6 +13,10 @@ const MainNavigator = () => {
     
     const logged = useSelector(state => state.authReducer.logged)
     const title = useSelector(state => state.headerReducer.title)
+
+    AsyncStorage.getItem('@token', (err, res) => {
+        console.log(res)
+    })
     
     return(
         <Stack.Navigator 

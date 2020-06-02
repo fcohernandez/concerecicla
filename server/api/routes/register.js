@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
             }
 
             const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
-                expiresIn: 1440
+                expiresIn: 60*60*24*30
             });
     
             return res.json({

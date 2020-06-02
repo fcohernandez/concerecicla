@@ -4,8 +4,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 
 import HomeScreen from '../screens/homeScreen/Home';
-import RecycleScreen from '../screens/recycleScreen/Recycle';
 import InfoScreen from '../screens/infoScreen/Info';
+import RecyclaNavigator from './ReciclaNavigator'
 import { changeTitle } from '../actions/headerAction';
 
 const Tab = createBottomTabNavigator();
@@ -25,7 +25,7 @@ const TabNavigator = () => {
         >
             <Tab.Screen 
                 name="Reciclar" 
-                component={RecycleScreen}
+                component={RecyclaNavigator}
                 options={{
                     tabBarIcon: () => (
                         <FontAwesome5 name="recycle" color={'#fff'} size={24} />

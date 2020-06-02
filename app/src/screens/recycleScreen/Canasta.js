@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Alert} from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Alert, AsyncStorage} from 'react-native';
 
 import Card from './components/Card';
+
+
 
 const Canasta = (props) => {
     const [paperCount, setPaperCount] = useState(0)
@@ -9,6 +11,60 @@ const Canasta = (props) => {
     const [batteryCount, setBatteryCount] = useState(0)
     const [organicCount, setOrganicCount] = useState(0)
     const [plasticCount, setPlasticCount] = useState(0)
+
+    const recicla = () => {
+        let materiales = []
+        let token
+
+        if(plasticCount > 0){
+            materiales.push("1")
+        }
+    
+        if(paperCount > 0){
+            materiales.push("2")
+        }
+    
+        if(glassCount > 0){
+            materiales.push("3")
+        }
+    
+        if(batteryCount > 0){
+            materiales.push("4")
+        }
+    
+        if(organicCount > 0){
+            materiales.push("5")
+        }
+
+        AsyncStorage.getItem('@token', (err, res) => {
+            fetch(`http://192.168.18.169:3000/recicla`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    materialId: materiales,
+                    token: res
+                })
+            })
+            .then(response => response.json())  // promise
+            .then(json => {
+                if(!json.ok){
+                    return Alert.alert(json.msg)
+                }
+                Alert.alert(`Reciclaje realizado con éxito!`)
+            })
+        })
+
+
+        setPaperCount(0)
+        setGlassCount(0)
+        setBatteryCount(0)
+        setOrganicCount(0)
+        setPlasticCount(0)
+        
+    }
 
     return(
         <View style = {styles.container}>
@@ -57,7 +113,7 @@ const Canasta = (props) => {
                 />
             </View>
             <View style = {{alignItems: 'center'}}>
-                <TouchableOpacity style = {styles.recycleButton}>
+                <TouchableOpacity style = {styles.recycleButton} onPress = {() => recicla()}>
                     <Text style = {{color: '#fff', fontSize: 28}}>Reciclar</Text>
                 </TouchableOpacity>
             </View>

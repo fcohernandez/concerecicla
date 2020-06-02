@@ -1,5 +1,6 @@
 const express = require('express')
 const Recicla = require('../models/recicla')
+const isAuthenticated = require('../auth')
 
 const router = express.Router()
 
@@ -43,11 +44,11 @@ router.get('/:id', (req, res) => {
 
 })
 
-router.post('/', (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
     let body = req.body
 
     let recicla = new Recicla({
-        userId: body.userId,
+        userId: req.user._id,
         materialId: body.materialId
     })
 

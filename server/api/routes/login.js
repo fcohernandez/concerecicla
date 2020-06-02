@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
         if(bcrypt.compareSync(password, usuarioDB.password) && email === usuarioDB.email){
 
             const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
-                expiresIn: 1440
+                expiresIn: 60*60*24*30
             });
 
             return res.json({
@@ -87,7 +87,7 @@ router.post('/google', async(req, res) => {
                 })
             }else{
                 const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
-                    expiresIn: 1440
+                    expiresIn: 60*60*24*30
                 });
 
                 return res.json({
@@ -117,7 +117,7 @@ router.post('/google', async(req, res) => {
                 }
 
                 const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
-                    expiresIn: 1440
+                    expiresIn: 60*60*24*30
                 });
 
                 return res.json({
@@ -156,7 +156,7 @@ router.post('/facebook', (req, res) => {
                 })
             }else{
                 const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
-                    expiresIn: 1440
+                    expiresIn: 60*60*24*30
                 });
 
                 return res.json({
@@ -187,7 +187,7 @@ router.post('/facebook', (req, res) => {
                 }
 
                 const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
-                    expiresIn: 1440
+                    expiresIn: 60*60*24*30
                 });
 
                 return res.json({
