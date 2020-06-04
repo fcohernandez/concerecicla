@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Text, FlatList } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { View, StyleSheet, Text, FlatList, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 import OrganicIcon from '../../../assets/organicIcon';
@@ -27,12 +27,81 @@ const DATA = [
       },
   ];
 
-const Historial = () => {
+const Historial = ({navigation}) => {
+
+  const [totalPlastic, setTotalPlastic] = useState(0)
+  const [totalPaper, setTotalPaper] = useState(0)
+  const [totalGlass, setTotalGlass] = useState(0)
+  const [totalBattery, setTotalBattery] = useState(0)
+  const [totalOrganic, setTotalOrganic] = useState(0)
+
+  useEffect(() => {
+
+    const unsubscribe = navigation.addListener('tabPress', () => {
+
+      fetch(`http://192.168.18.169:3000/recicla`)
+      .then((response) => response.json())
+      .then((json) => {
+        if(!json.ok){
+          Alert.alert("Ha ocurrido un error")
+        }
+
+        setTotalPlastic(0)
+        setTotalPaper(0)
+        setTotalGlass(0)
+        setTotalBattery(0)
+        setTotalOrganic(0)
+
+        let paper = 0
+        let plastic = 0
+        let glass = 0
+        let battery = 0
+        let organic = 0
+
+        json.reciclajes.map(reciclaje => {
+          reciclaje.materiales.map(material => {
+              if(material.material == "1"){
+                plastic = plastic + material.cantidad
+              }
+              if(material.material == "2"){
+                paper = paper + material.cantidad
+              }
+              if(material.material == "3"){
+                glass = glass + material.cantidad
+              }
+              if(material.material == "4"){
+                battery = battery + material.cantidad
+              }
+              if(material.material == "5"){
+                organic = organic + material.cantidad
+              }
+          })
+
+          setTotalPlastic(plastic)
+          setTotalPaper(paper)
+          setTotalGlass(glass)
+          setTotalBattery(battery)
+          setTotalOrganic(organic)
+          
+        })
+
+      })
+    })
+
+    return unsubscribe
+    
+  }, [navigation])
 
     return (
         <>
             <Text style = {styles.totalText}>Total</Text>
-            <PieChart />
+            <PieChart 
+              plastic = {totalPlastic}
+              paper = {totalPaper}
+              glass = {totalGlass}
+              battery = {totalBattery}
+              organic = {totalOrganic}
+            />
             <View style = {{flexDirection: 'row', alignItems: 'center', paddingStart: 5, paddingEnd: 5, justifyContent: 'space-between'}}>
                 <OrganicIcon height={80} width={80}/>
                 <PlasticIcon height={60} width={60}/>

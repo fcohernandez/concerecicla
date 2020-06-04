@@ -6,8 +6,11 @@ let reciclaSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId, ref: 'Usuario'
     },
-    materialId: [
-        {type: String, ref: 'PuntoLimpio'}
+    materiales: [
+        {
+            material: {type: String, ref: 'PuntoLimpio'},
+            cantidad: {type: Number }
+        }
     ],
     fecha: {
         type: Date,

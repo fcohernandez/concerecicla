@@ -17,24 +17,26 @@ const Canasta = (props) => {
         let token
 
         if(plasticCount > 0){
-            materiales.push("1")
+            materiales.push({material: "1", cantidad: plasticCount})
         }
     
         if(paperCount > 0){
-            materiales.push("2")
+            materiales.push({material: "2", cantidad: paperCount})
         }
     
         if(glassCount > 0){
-            materiales.push("3")
+            materiales.push({material: "3", cantidad: glassCount})
         }
     
         if(batteryCount > 0){
-            materiales.push("4")
+            materiales.push({material: "4", cantidad: batteryCount})
         }
     
         if(organicCount > 0){
-            materiales.push("5")
+            materiales.push({material: "5", cantidad: organicCount})
         }
+
+        //return Alert.alert(JSON.stringify(materiales))
 
         AsyncStorage.getItem('@token', (err, res) => {
             fetch(`http://192.168.18.169:3000/recicla`, {
@@ -44,7 +46,7 @@ const Canasta = (props) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    materialId: materiales,
+                    materiales,
                     token: res
                 })
             })

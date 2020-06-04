@@ -23,11 +23,11 @@ router.get('/', (req, res) => {
 
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id', isAuthenticated, (req, res) => {
 
-    let id = req.params.id
+    let id = req.user._id
     
-    Recicla.findById(id)
+    Recicla.find({userId: id})
         .exec((err, reciclajes) => {
             if(err){
                 return res.status(400).json({
@@ -49,7 +49,7 @@ router.post('/', isAuthenticated, (req, res) => {
 
     let recicla = new Recicla({
         userId: req.user._id,
-        materialId: body.materialId
+        materiales: body.materiales
     })
 
     recicla.save( (err, reciclaDB) => {
