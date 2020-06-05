@@ -14,7 +14,6 @@ const Canasta = (props) => {
 
     const recicla = () => {
         let materiales = []
-        let token
 
         if(plasticCount > 0){
             materiales.push({material: "1", cantidad: plasticCount})
@@ -77,7 +76,7 @@ const Canasta = (props) => {
                     icon = {'newspaper'}
                     text = {'Papeles y cartones'}
                     svg = {false}
-                    color = {'#e56e25'}
+                    color = {'#f00000'}
                 />
                 <Card 
                     count = {glassCount} 
