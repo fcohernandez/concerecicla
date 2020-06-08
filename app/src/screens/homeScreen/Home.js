@@ -2,14 +2,16 @@ import React, {useState, useEffect} from 'react';
 import { View, StyleSheet, Text, Dimensions, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import {useRoute} from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { changeTitle } from '../../actions/headerAction';
+import { fetchPoints } from '../../actions/pointsAction'
 
 const Home = () => {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [points, setPoints] = useState([])
+
+    const dispatch = useDispatch()
 
     useEffect(() => {
       (async () => {
@@ -19,7 +21,12 @@ const Home = () => {
         }
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);
-      })();
+      })()
+
+      
+
+      dispatch(fetchPoints())
+
     }, []);
   
     let text = 'Waiting..';
@@ -29,8 +36,11 @@ const Home = () => {
       text = JSON.stringify(location);
     }
 
+    const puntos = useSelector(state => state.pointsReducer.puntos)
+
     return(
         <View style = {styles.container}>
+            {console.log(puntos)}
             { location ?
                 <MapView
                     style = {styles.mapStyle}
@@ -41,7 +51,7 @@ const Home = () => {
                         longitudeDelta: 0.025}}
                 >
                     <Marker
-                        coordinate={{latitude: location.coords.latitude, longitude: location.coords.longitude}}
+                        coordinate={{latitude: -36.92572621746226, longitude: -73.02273273468018}}
                         title='prueba'
                         description='testttt'
                     />
