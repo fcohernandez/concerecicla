@@ -1,15 +1,19 @@
-import React, {useState, useEffect} from 'react';
-import { View, StyleSheet, Text, Dimensions, ActivityIndicator } from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import { View, StyleSheet, Dimensions, ActivityIndicator, Modal, Text, TouchableOpacity} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchPoints } from '../../actions/pointsAction'
 
+import ModalView from './components/Modal'
+
 const Home = () => {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [points, setPoints] = useState([])
+    const [point, setPoint] = useState({})
+
+    const [modalVisible, setModalVisible] = useState(false)
 
     const dispatch = useDispatch()
 
@@ -22,26 +26,23 @@ const Home = () => {
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);
       })()
-
-      
-
       dispatch(fetchPoints())
 
     }, []);
   
-    let text = 'Waiting..';
-    if (errorMsg) {
-      text = errorMsg;
-    } else if (location) {
-      text = JSON.stringify(location);
+    const setModalInfo = (punto) => {
+
+      setPoint(punto);
+
+      setModalVisible(true)
     }
 
     const puntos = useSelector(state => state.pointsReducer.puntos)
 
     return(
-        <View style = {styles.container}>
-            {console.log(puntos)}
+      <View style = {styles.container}>
             { location ?
+            <>
                 <MapView
                     style = {styles.mapStyle}
                     initialRegion={{
@@ -50,12 +51,36 @@ const Home = () => {
                         latitudeDelta: 0.025,
                         longitudeDelta: 0.025}}
                 >
-                    <Marker
-                        coordinate={{latitude: -36.92572621746226, longitude: -73.02273273468018}}
-                        title='prueba'
+                {
+                  puntos.map(punto => {
+                    return(
+                      <Marker
+                        coordinate={{latitude: punto.location.coordinates[1], longitude: punto.location.coordinates[0]}}
+                        title={punto.nombre}
                         description='testttt'
-                    />
-                </MapView> 
+                        onPress = {() => setModalInfo(punto)}
+                        key = {punto._id}
+                      />
+                    )        
+                  })
+                }
+                    
+                    
+                </MapView>
+                <Modal
+                    animationType = "slide"
+                    transparent = {true}
+                    visible = {modalVisible}
+                >
+                    <View style= {styles.modal}>
+                        <Text>{point.nombre}</Text>
+                        <TouchableOpacity onPress={() => setModalVisible(false)}>
+                            <Text>X</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Modal>
+
+                </>
             :
             <ActivityIndicator size="large" color="#0000ff" />} 
         </View>
@@ -72,7 +97,15 @@ const styles = StyleSheet.create({
     mapStyle: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+        zIndex: -1
     },
+    modal: {
+      flex: 1,
+      marginTop: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff'
+    }
   });
 
   export default Home;
