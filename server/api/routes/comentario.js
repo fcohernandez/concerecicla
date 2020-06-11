@@ -24,13 +24,38 @@ router.get('/', (req, res) => {
 
 })
 
+router.get('/:id', (req, res) => {
+
+    let id = req.params.id
+
+    Comentario.find({puntoId: id})
+        .exec((err, comentarios) => {
+            if(err){
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            res.json({
+                ok: true,
+                comentarios
+            })
+        })
+
+})
+
 router.post('/', isAuthenticated, (req, res) => {
     let body = req.body
+
+    console.log(req.user)
 
     let comentario = new Comentario({
         userId: req.user._id,
         puntoId: body.puntoId,
-        descripcion: body.descripcion
+        descripcion: body.descripcion,
+        userName: req.user.nombre,
+        userLastName: req.user.apellido
     })
 
     comentario.save( (err, comentarioDB) => {
