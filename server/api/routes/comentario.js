@@ -1,5 +1,6 @@
 const express = require('express')
 const Comentario = require('../models/comentario')
+const Punto = require('../models/puntoLimpio')
 
 const isAuthenticated = require('../auth')
 
@@ -48,14 +49,13 @@ router.get('/:id', (req, res) => {
 router.post('/', isAuthenticated, (req, res) => {
     let body = req.body
 
-    console.log(req.user)
-
     let comentario = new Comentario({
         userId: req.user._id,
         puntoId: body.puntoId,
         descripcion: body.descripcion,
         userName: req.user.nombre,
-        userLastName: req.user.apellido
+        userLastName: req.user.apellido,
+        puntuacion: body.puntuacion
     })
 
     comentario.save( (err, comentarioDB) => {

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { View, StyleSheet, Dimensions, ActivityIndicator, Modal, Text, TouchableOpacity, ScrollView, Image} from 'react-native';
+import { View, StyleSheet, Dimensions, ActivityIndicator, Modal, Text, TouchableOpacity, ScrollView, Image, FlatList, TextInput, Alert, AsyncStorage} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,10 @@ const Home = () => {
     const [point, setPoint] = useState({})
 
     const [modalVisible, setModalVisible] = useState(false)
+    const [modalComentario, setModalComentario] = useState(false)
+
+    const [rating, setRating] = useState(0)
+    const [descripcion, setDescripcion] = useState('')
 
     const dispatch = useDispatch()
 
@@ -43,12 +47,67 @@ const Home = () => {
 
     const ratingCompleted = ( rating ) => {
       console.log( `Rating is: ${rating}` );
+      setRating(rating)
     }
 
-    const puntos = useSelector(state => state.pointsReducer.puntos)
+    const postComentario = () => {
+
+      AsyncStorage.getItem('@token', (err, res) => {
+        fetch(`http://192.168.18.169:3000/comentario`, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    token: res,
+                    puntoId: point._id,
+                    descripcion,
+                    puntuacion: rating
+                })
+            })
+            .then(response => response.json())  // promise
+            .then(json => {
+                if(!json.ok){
+                  setModalComentario(false)
+                    return Alert.alert(json.msg)
+                    
+                }
+
+                Alert.alert('Comentario registrado!')
+                setModalComentario(false)
+                setModalVisible(false)
+                
+
+                fetch(`http://192.168.18.169:3000/puntolimpio/${point._id}`, {
+                method: 'PUT',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    totalPuntuaciones: point.totalPuntuaciones,
+                    rating,
+                    puntuacion: point.puntuacion
+                })
+                })
+                .then(response => response.json())  // promise
+                .then(json => {
+                    if(!json.ok){
+                        return Alert.alert(json.msg)
+                        
+                    }
+                    console.log(json)
+                    dispatch(fetchPoints())
+                })
+                })
+      })
+      
+    }
+
+    let puntos = useSelector(state => state.pointsReducer.puntos)
     
-    const comentarios = useSelector(state => state.commentsReducer.comentarios)
-    //console.log(puntos)
+    let comentarios = useSelector(state => state.commentsReducer.comentarios)
 
     return(
       <View style = {styles.container}>
@@ -83,6 +142,7 @@ const Home = () => {
                     transparent = {true}
                     visible = {modalVisible}
                 >
+                {console.log(point)}
                     <View style= {styles.modal}>
                         <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10, marginTop: 10}}>
                         <TouchableOpacity onPress={() => setModalVisible(false)}>   
@@ -109,10 +169,9 @@ const Home = () => {
                           <AirbnbRating
                             count={10}
                             reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Very Good", "Wow", "Amazing", "Unbelievable", "Jesus"]}
-                            defaultRating={point.puntuacion}
+                            defaultRating={point.puntuacionPromedio}
                             size={20}
                             reviewSize= {1}
-                            onFinishRating={(e) => ratingCompleted(e)}
                             isDisabled = {true}
                           />
                         </View>
@@ -129,12 +188,62 @@ const Home = () => {
                         </View>
 
                         <View style = {{alignItems: 'center'}}>
-                            <TouchableOpacity style = {styles.recycleButton} onPress = {() => recicla()}>
+                            <TouchableOpacity style = {styles.recycleButton} onPress = {() => setModalComentario(true)}>
                                 <Text style = {{color: '#fff', fontSize: 28}}>Valorar</Text>
                             </TouchableOpacity>
                         </View>
-                        <Comentario/>
+                        <FlatList
+                          data={comentarios}
+                          renderItem = {item => <Comentario comentario = {item}/>}
+                          keyExtractor={item => item._id}
+                        />
                     </View>
+                </Modal>
+
+                <Modal
+                    animationType = "slide"
+                    transparent = {true}
+                    visible = {modalComentario}
+                >
+                  <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000080'}}>
+                    <View style={{width: 300,height: 400, backgroundColor: '#fff', borderRadius: 18}}>
+                      <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10, marginTop: 10}}>
+                          <TouchableOpacity onPress={() => setModalComentario(false)}>   
+                            <FontAwesome5 name="window-close" color={'#333'} size={36} />
+                          </TouchableOpacity>
+                      </View>
+                      <TextInput 
+                        style = 
+                        {{borderRadius: 18, 
+                          borderColor: '#95c52d', 
+                          borderWidth: 2, 
+                          padding: 10, 
+                          height: 140,
+                          marginLeft: 10,
+                          marginRight: 10,
+                          marginTop: 10}}
+                          multiline = {true}
+                          placeholder = "Escriba aquí su comentario"
+                          onChangeText = {text => setDescripcion(text)}
+                        />
+
+                      <AirbnbRating
+                          count={10}
+                          reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Very Good", "Wow", "Amazing", "Unbelievable", "Jesus"]}
+                          defaultRating={rating}
+                          size={20}
+                          reviewSize= {20}
+                          onFinishRating={(e) => ratingCompleted(e)}
+                      />
+                      <View style={{alignItems: 'center', marginTop: 20}}>
+                        <TouchableOpacity style = {styles.recycleButton} onPress = {() => postComentario()}>
+                          <Text style = {{color: '#fff', fontSize: 28, alignSelf: 'center'}}>Comentar</Text>
+                        </TouchableOpacity>
+                      </View>
+                      
+                    </View>
+                  </View>
+                  {console.log(point)}
                 </Modal>
 
                 </>

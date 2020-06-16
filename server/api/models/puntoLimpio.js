@@ -29,7 +29,17 @@ let puntoLimpioSchema = new Schema({
           type: [Number],
           required: true
         }
-      }
+    },
+    totalPuntuaciones: {
+      type: Number,
+      required: false,
+      default: 0
+    },
+    puntuacionPromedio: {
+      type: Number,
+      required: false,
+      default: 0
+    }
 })
 
 puntoLimpioSchema.index({location: "2dsphere"})

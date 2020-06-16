@@ -52,8 +52,21 @@ router.put('/:id', (req, res) => {
     
     let id = req.params.id
     let body = req.body
+    
+    let totalPuntuaciones = body.totalPuntuaciones + 1
+    let rating = body.rating
+    let puntuacion = body.puntuacion + rating
+    let promedio = puntuacion / totalPuntuaciones
 
-    PuntoLimpio.findByIdAndUpdate(id, body, {new: true}, (err, puntoDB) => {
+    let cambio = {
+        totalPuntuaciones,
+        puntuacion,
+        puntuacionPromedio: promedio
+    }
+
+    console.log(cambio)
+
+    PuntoLimpio.findByIdAndUpdate(id, cambio, {new: true}, (err, puntoDB) => {
         if(err){
             return res.status(400).json({
                 ok: false,
