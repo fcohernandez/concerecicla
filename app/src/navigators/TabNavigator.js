@@ -5,7 +5,9 @@ import { useDispatch } from 'react-redux';
 
 import HomeScreen from '../screens/homeScreen/Home';
 import InfoScreen from '../screens/infoScreen/Info';
-import RecyclaNavigator from './ReciclaNavigator'
+import UserScreen from '../screens/userScreen/User';
+import RecyclaNavigator from './ReciclaNavigator';
+
 import { changeTitle } from '../actions/headerAction';
 
 const Tab = createBottomTabNavigator();
@@ -18,9 +20,10 @@ const TabNavigator = () => {
         <Tab.Navigator
             initialRouteName = "Puntos Limpios"
             tabBarOptions = {{
-                style : { backgroundColor: '#95c52d', borderTopRightRadius: 18, borderTopLeftRadius: 18, color: '#fff' },
+                style : { backgroundColor: '#95c52d', borderTopRightRadius: 18, borderTopLeftRadius: 18, color: '#fff'},
                 activeTintColor: '#fff',
                 tabStyle: '#333',
+                keyboardHidesTabBar: true
             }}
         >
             <Tab.Screen 
@@ -65,6 +68,22 @@ const TabNavigator = () => {
                         dispatch(changeTitle('Información'))
                     }
                 })}
+            />
+
+            <Tab.Screen 
+                name="Usuario" 
+                component={UserScreen}
+                options={{
+                    tabBarIcon: () => (
+                        <FontAwesome5 name="user-alt" color={'#fff'} size={24} />
+                    ) 
+                }}
+                listeners={() => ({
+                    tabPress: () => {
+                        dispatch(changeTitle('Perfil Usuario'))
+                    }
+                })}
+
             />
         </Tab.Navigator>
     )

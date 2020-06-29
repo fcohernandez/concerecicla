@@ -124,12 +124,20 @@ const Login = ({ navigation }) => {
                     return Alert.alert(json.msg)
                 }
 
-                AsyncStorage.setItem('@token', json.token, (res, err) => {
+                let user = JSON.stringify(json.usuario)
+
+                AsyncStorage.setItem('@userInfo', user, (res,err) => {
                     if(err){
-                        console.log(err)
+                        return console.log(err)
                     }
-                    dispatch(login(true))
-               }) 
+                    AsyncStorage.setItem('@token', json.token, (res, err) => {
+                        if(err){
+                            return console.log(err)
+                        }
+                        dispatch(login(true))
+                   })
+                })
+   
             })
         }
     }

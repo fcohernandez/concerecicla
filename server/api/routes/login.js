@@ -36,7 +36,8 @@ router.post('/', (req, res) => {
             return res.json({
                 ok: true,
                 msg: 'Login exitoso!',
-                token
+                token,
+                usuarioDB
             })
         }
 
