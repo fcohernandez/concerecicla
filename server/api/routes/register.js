@@ -48,7 +48,8 @@ router.post('/', (req, res) => {
             return res.json({
                 ok: true,
                 msg: 'Usuario creado con éxito',
-                token
+                token,
+                usuarioDB: userDB
             })
         })
 

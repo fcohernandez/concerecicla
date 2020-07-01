@@ -44,12 +44,21 @@ const Register = () => {
                 return Alert.alert(json.msg)
             }
 
-            AsyncStorage.setItem('@token', json.token, (res, err) => {
+            console.log(json)
+
+            let user = JSON.stringify(json.usuarioDB)
+            console.log(user)
+            AsyncStorage.setItem('@userInfo', user, (res,err) => {
                 if(err){
-                    console.log(err)
+                    return console.log(err)
                 }
-                dispatch(login(true))
-           }) 
+                AsyncStorage.setItem('@token', json.token, (res, err) => {
+                    if(err){
+                        return console.log(err)
+                    }
+                    dispatch(login(true))
+               })
+            }) 
         })
     }
 

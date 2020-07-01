@@ -1,16 +1,17 @@
 import React, {useState, useEffect} from 'react';
-import { View, StyleSheet, Text, TextInput, AsyncStorage, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput, AsyncStorage, TouchableOpacity, Alert } from 'react-native';
 
 import { login } from '../../actions/authAction';
 
 import { useDispatch } from 'react-redux';
 
-import { changeTitle } from '../../actions/headerAction';
 
 const User = () => {
 
     const [nombre, setNombre] = useState('')
     const [apellido, setApellido] = useState('')
+    const [userId, setUserId] = useState('')
+    const [edad, setEdad] = useState('0')
 
     const dispatch = useDispatch();
 
@@ -19,11 +20,43 @@ const User = () => {
             let userInfo = JSON.parse(res)
             setNombre(userInfo.nombre)
             setApellido(userInfo.apellido)
+            setUserId(userInfo._id)
         })
     },[])
 
     const logOut = () => {
         dispatch(login(false))
+    }
+
+    const updateUser = () => {
+        fetch(`http://192.168.18.169:3000/usuario/${userId}`, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                nombre,
+                apellido,
+            })
+        })
+        .then(response => response.json())  // promise
+        .then(json => {
+            if(!json.ok){
+                return Alert.alert(json.msg)
+            }
+
+            let user = JSON.stringify(json.usuario)
+
+            AsyncStorage.setItem('@userInfo', user, (res, err) => {
+                if(err){
+                    console.log(err)
+                }
+
+                Alert.alert('Usuario actualizado correctamente!')
+                
+           }) 
+        })
     }
 
     return(
@@ -33,22 +66,25 @@ const User = () => {
                 style = {styles.input}
                 value = {nombre}
                 placeholder = 'Nombre'
+                onChangeText = {text => setNombre(text)}
             />
             <Text style={styles.texto}>Apellido</Text>
             <TextInput 
                 style = {styles.input}
                 value = {apellido}
                 placeholder = 'Apellido'
+                onChangeText = {text => setApellido(text)}
             />
             <Text style={styles.texto}>Edad</Text>
             <TextInput 
                 style = {styles.input}
-                value = ''
+                value = {edad}
                 placeholder = "Edad"
+                onChangeText = {text => setEdad(text)}
             />
             <TouchableOpacity 
                     style = {styles.saveButton}
-                    onPress={ () => actualizarInfo()}
+                    onPress={ () => updateUser()}
             >
                 <Text style = { styles.textSave }>Guardar</Text>
             </TouchableOpacity>

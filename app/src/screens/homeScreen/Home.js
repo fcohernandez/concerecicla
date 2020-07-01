@@ -27,7 +27,7 @@ const Home = () => {
       (async () => {
         let { status } = await Location.requestPermissionsAsync();
         if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
+          Alert.alert('Debe permitir que la aplicación tenga acceso a su localización para poder utilizarla de forma correcta');
         }
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);

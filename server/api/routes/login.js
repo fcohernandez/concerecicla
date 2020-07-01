@@ -12,6 +12,8 @@ router.post('/', (req, res) => {
 
     let {email, password} = req.body
 
+    console.log(email)
+
     Usuario.findOne( {email}, (err, usuarioDB) =>{
         if(err){
             return res.status(400).json({
@@ -19,6 +21,7 @@ router.post('/', (req, res) => {
                 err
             })
         }
+        console.log(usuarioDB)
 
         if(!usuarioDB){
             return res.json({
