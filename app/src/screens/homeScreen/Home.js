@@ -142,7 +142,6 @@ const Home = () => {
                     transparent = {true}
                     visible = {modalVisible}
                 >
-                {console.log(point)}
                     <View style= {styles.modal}>
                         <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10, marginTop: 10}}>
                         <TouchableOpacity onPress={() => setModalVisible(false)}>   
