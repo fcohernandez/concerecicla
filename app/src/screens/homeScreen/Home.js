@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AirbnbRating } from 'react-native-ratings';
 
 import { fetchPoints, fetchComments } from '../../actions/pointsAction'
+import { fetchMaterials } from '../../actions/materialsAction'
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import Comentario from './components/Comentario';
@@ -33,7 +34,7 @@ const Home = () => {
         setLocation(location);
       })()
       dispatch(fetchPoints())
-
+      dispatch(fetchMaterials())
     }, []);
   
     const setModalInfo = (punto) => {
