@@ -35,7 +35,14 @@ const Historial = ({navigation}) => {
           Alert.alert("Ha ocurrido un error")
         }
 
-        setHistorial(json.reciclajes)
+        
+
+        if(Object.keys(json.reciclajes).length == 0){
+          Alert.alert('Ups...', 'Aún no has realizado ningún reciclaje! Recicla al menos 1 vez para ver tu historial.')
+          navigation.goBack()
+        }else{
+          setHistorial(json.reciclajes)
+        }
 
         setTotalPlastic(0)
         setTotalPaper(0)

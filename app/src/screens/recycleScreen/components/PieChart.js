@@ -5,43 +5,6 @@ import { Text } from 'react-native-svg'
 
 const Piechart = (props) => {
 
-    /*const data = [ props.plastic,props.paper,props.glass,props.battery,props.organic]
-
-    const color = (index) => {
-        switch(index){
-            case 0:
-                return '#f18a20'
-            case 1:
-                return '#f00000'
-            case 2:
-                return '#4eb966'
-            case 3:
-                return '#3ba3d2'
-            case 4:
-                return '#efb119'
-            default:
-                break;
-        }
-    }
-
-    const material = (index) => {
-        switch(index){
-            case 0:
-                return 'plásticos'
-            case 1:
-                return 'papeles y cartones'
-            case 2:
-                return 'vidrios'
-            case 3:
-                return 'baterías'
-            case 4:
-                return 'desechos orgánicos'
-            default:
-                break;
-        }
-        //<PieChart style={{ height: 200, marginTop: 15 }} data={pieData} />
-    }*/
-
     const data1 = [
         {
             key: 1,
@@ -85,21 +48,11 @@ const Piechart = (props) => {
                     stroke={'black'}
                     strokeWidth={0.2}
                 >
-                    {data.amount}
+                    {data.amount == 0 ? '' : data.amount}
                 </Text>
             )
         })
     }
-
-    /*const pieData = data
-        .map((value, index) => ({
-            value,
-            svg: {
-                fill: color(index),
-                onPress: () => Alert.alert(`Has reciclado ${value} de ${material(index)}`)
-            },
-            key: `pie-${index}`,
-        }))*/
 
     return (
             <PieChart

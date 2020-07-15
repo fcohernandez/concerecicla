@@ -4,7 +4,6 @@ import { View, StyleSheet, Text, ActivityIndicator, FlatList } from 'react-nativ
 
 const Card = (props) => {
     const material = props.material.item
-    console.log(material)
 
     return(
         <View style = {styles.materialButton}>

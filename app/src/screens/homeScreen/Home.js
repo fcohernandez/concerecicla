@@ -15,6 +15,7 @@ const Home = () => {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [point, setPoint] = useState({})
+    const [loadingComentarios, setLoadingComentarios] = useState(true)
 
     const [modalVisible, setModalVisible] = useState(false)
     const [modalComentario, setModalComentario] = useState(false)
@@ -44,10 +45,10 @@ const Home = () => {
       dispatch(fetchComments(punto._id))
 
       setModalVisible(true)
+      setLoadingComentarios(false)
     }
 
     const ratingCompleted = ( rating ) => {
-      console.log( `Rating is: ${rating}` );
       setRating(rating)
     }
 
@@ -98,7 +99,6 @@ const Home = () => {
                         return Alert.alert(json.msg)
                         
                     }
-                    console.log(json)
                     dispatch(fetchPoints())
                 })
                 })
@@ -192,11 +192,19 @@ const Home = () => {
                                 <Text style = {{color: '#fff', fontSize: 28}}>Valorar</Text>
                             </TouchableOpacity>
                         </View>
-                        <FlatList
-                          data={comentarios}
-                          renderItem = {item => <Comentario comentario = {item}/>}
-                          keyExtractor={item => item._id}
-                        />
+
+                        {
+                          loadingComentarios ?
+                              <ActivityIndicator size="large" color="#0000ff" />
+                            :
+
+                            <FlatList
+                              data={comentarios}
+                              renderItem = {item => <Comentario comentario = {item}/>}
+                              keyExtractor={item => item._id}
+                            />
+                        }
+                        
                     </View>
                 </Modal>
 
@@ -243,7 +251,6 @@ const Home = () => {
                       
                     </View>
                   </View>
-                  {console.log(point)}
                 </Modal>
 
                 </>
