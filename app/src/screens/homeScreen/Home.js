@@ -106,9 +106,12 @@ const Home = () => {
       
     }
 
+
     let puntos = useSelector(state => state.pointsReducer.puntos)
     
     let comentarios = useSelector(state => state.commentsReducer.comentarios)
+
+    console.log(puntos)
 
     return(
       <View style = {styles.container}>
@@ -121,6 +124,7 @@ const Home = () => {
                         longitude: location.coords.longitude,
                         latitudeDelta: 0.025,
                         longitudeDelta: 0.025}}
+                    onPress = {(e)=>test(e)}
                 >
                 {
                   puntos.map(punto => {

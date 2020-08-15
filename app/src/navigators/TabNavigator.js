@@ -7,6 +7,7 @@ import HomeScreen from '../screens/homeScreen/Home';
 import InfoScreen from '../screens/infoScreen/Info';
 import UserScreen from '../screens/userScreen/User';
 import RecyclaNavigator from './ReciclaNavigator';
+import AdminNavigator from './AdminNavigator';
 
 import { changeTitle } from '../actions/headerAction';
 
@@ -72,7 +73,7 @@ const TabNavigator = () => {
 
             <Tab.Screen 
                 name="Usuario" 
-                component={UserScreen}
+                component={AdminNavigator}
                 options={{
                     tabBarIcon: () => (
                         <FontAwesome5 name="user-alt" color={'#fff'} size={24} />
@@ -85,6 +86,7 @@ const TabNavigator = () => {
                 })}
 
             />
+
         </Tab.Navigator>
     )
 }

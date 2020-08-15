@@ -135,7 +135,7 @@ const Login = ({ navigation }) => {
             .then(response => response.json())  // promise
             .then(json => {
                 if(!json.ok){
-                    return Alert.alert(json.msg)
+                    return console.log(json)
                 }
 
                 let user = JSON.stringify(json.usuario)

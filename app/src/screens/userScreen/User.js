@@ -6,12 +6,13 @@ import { login } from '../../actions/authAction';
 import { useDispatch } from 'react-redux';
 
 
-const User = () => {
+const User = ({navigation}) => {
 
     const [nombre, setNombre] = useState('')
     const [apellido, setApellido] = useState('')
     const [userId, setUserId] = useState('')
     const [edad, setEdad] = useState('0')
+    const [admin, setAdmin] = useState(false)
 
     const dispatch = useDispatch();
 
@@ -21,6 +22,7 @@ const User = () => {
             setNombre(userInfo.nombre)
             setApellido(userInfo.apellido)
             setUserId(userInfo._id)
+            setAdmin(userInfo.admin)
         })
     },[])
 
@@ -95,6 +97,15 @@ const User = () => {
             >
                 <Text style = { styles.textSesion }>Cerrar Sesión</Text>
             </TouchableOpacity>
+            {admin ? 
+                <TouchableOpacity 
+                        style = {styles.cerrarSesion}
+                        onPress={ () => navigation.navigate('points')}
+                >
+                    <Text style = { styles.textSesion }>Administrar puntos</Text>
+                </TouchableOpacity>
+                : <></>
+            }
         </View>
     );
 }
