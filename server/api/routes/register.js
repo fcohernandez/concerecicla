@@ -14,7 +14,9 @@ router.post('/', (req, res) => {
         nombre: body.nombre,
         apellido: body.apellido,
         email: body.email,
-        password: bcrypt.hashSync(body.password, 10)
+        password: bcrypt.hashSync(body.password, 10),
+        admin: body.admin,
+        edad: body.edad
     })
 
     Usuario.findOne( {email}, (err, usuarioDB) =>{

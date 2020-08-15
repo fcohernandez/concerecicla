@@ -1,19 +1,25 @@
 import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import MapView, { Marker } from 'react-native-maps';
-import {View, Text, StyleSheet, TextInput, CheckBox, Button, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, TextInput, CheckBox, Button, ScrollView, Dimensions} from 'react-native';
+import {fetchPoints} from '../../actions/pointsAction'
 
-const Points = () => {
+const windowWidth = Dimensions.get('window').width;
+
+const Points = ({navigation}) => {
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [latitude, setLatitude] = useState('')
-    const [longitude, setLongitude] = useState('')
+    const [latitude, setLatitude] = useState(0)
+    const [longitude, setLongitude] = useState(0)
     const [plastic, setPlastic] = useState(false)
     const [paper, setPaper] = useState(false)
     const [glass, setGlass] = useState(false)
     const [battery, setBattery] = useState(false)
     const [organic, setOrganic] = useState(false)
+    const [address, setAddress] = useState('')
     let materials = []
+
+    const dispatch = useDispatch();
 
     const setMaterials = () => {
         if(plastic)
@@ -28,8 +34,10 @@ const Points = () => {
             materials.push("5")
     }
 
-    const test = (e) => {
-        console.log(e.nativeEvent.coordinate)
+    const setCoordinates = (e) => {
+        setLatitude(e.nativeEvent.coordinate.latitude)
+        setLongitude(e.nativeEvent.coordinate.longitude)
+        console.log(latitude, longitude)
     }
 
     const postPoint = () => {
@@ -47,7 +55,8 @@ const Points = () => {
                         type: "Point",
                         coordinates: [parseFloat(longitude), parseFloat(latitude)]
                     },
-                    materiales: materials
+                    materiales: materials,
+                    direccion: address
                 })
             })
             .then(response => response.json())  // promise
@@ -55,6 +64,8 @@ const Points = () => {
                 if(!json.ok){
                     console.log(json)
                 }
+                dispatch(fetchPoints)
+                navigation.goBack()
                 console.log(json)
             })  
     }
@@ -63,6 +74,24 @@ const Points = () => {
     return(
         <ScrollView style = {styles.container}>
             <Text>Pantalla nuevos puntos</Text>
+            <MapView
+                    style = {styles.mapStyle}
+                    initialRegion={{
+                        latitude: -36.827093734017495,
+                        longitude: -73.05026829242706,
+                        latitudeDelta: 0.025,
+                        longitudeDelta: 0.025}}
+                    onPress = {(e)=>setCoordinates(e)}
+            >
+                <Marker
+                    coordinate={{latitude, longitude}}
+                    title={'lol'}
+                    description='testttt'
+                    //onPress = {() => setModalInfo(punto)}
+                    key = {'12ads'}
+                />
+            </MapView>
+
             <TextInput
                 style={styles.input}
                 value = {name}
@@ -77,34 +106,13 @@ const Points = () => {
                 placeholder = "Descripción punto limpio"
                 autoCapitalize = 'none'
             />
-            
-            <View style={{flexDirection: 'row'}}>
-                <TextInput
-                    style={styles.inputCoord}
-                    value = {longitude}
-                    onChangeText = {text => setLongitude(text)}
-                    placeholder = "Longitud"
-                    autoCapitalize = 'none'
-                />
-                <TextInput
-                    style={styles.inputCoord}
-                    value = {latitude}
-                    onChangeText = {text => setLatitude(text)}
-                    placeholder = "Latitud"
-                    autoCapitalize = 'none'
-                />
-            </View>
-
-            <MapView
-                    style = {styles.mapStyle}
-                    initialRegion={{
-                        latitude: -36.827093734017495,
-                        longitude: -73.05026829242706,
-                        latitudeDelta: 0.025,
-                        longitudeDelta: 0.025}}
-                    onPress = {(e)=>test(e)}
-            ></MapView>
-
+            <TextInput
+                style={styles.input}
+                value = {address}
+                onChangeText = {text => setAddress(text)}
+                placeholder = "Dirección punto limpio"
+                autoCapitalize = 'none'
+            />
             <View style ={{flexDirection: 'row'}}>
                 <CheckBox
                     value={plastic}
@@ -132,8 +140,6 @@ const Points = () => {
                     
                 />
                 <Text style={{alignSelf: 'center'}}>Baterías</Text>
-            </View>
-            <View style ={{flexDirection: 'row'}}>
                 <CheckBox
                     value={organic}
                     onValueChange={setOrganic}
@@ -155,24 +161,17 @@ const styles = StyleSheet.create({
     input: {
         backgroundColor: '#fff',
         borderRadius: 28,
-        width: 280,
-        height: 45,
-        paddingLeft: 15,
-        marginBottom: 15
-    },
-    inputCoord: {
-        backgroundColor: '#fff',
-        borderRadius: 28,
-        width: 130,
+        width: windowWidth - 40,
         height: 45,
         paddingLeft: 15,
         marginBottom: 15,
-        marginLeft: 10,
-        marginRight:10
+        marginTop: 15
     },
     mapStyle: {
         width: 400,
         height: 400,
-        zIndex: -1
+        zIndex: -1,
+        marginBottom: 15,
+        marginTop: 20
     },
 })

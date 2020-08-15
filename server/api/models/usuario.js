@@ -19,6 +19,14 @@ let usuarioSchema = new Schema({
         type: String,
         required: [true, 'Es necesaria una contraseña']
     },
+    edad: {
+        type: Number,
+        default: 0
+    },
+    admin: {
+        type: Boolean,
+        default: false,
+    },
     google: {
         type: Boolean,
         required: false,

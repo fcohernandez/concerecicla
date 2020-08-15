@@ -16,6 +16,10 @@ let puntoLimpioSchema = new Schema({
         type: String,
         required: [true, 'Por favor ingrese una descripción']
     },
+    direccion: {
+        type: String,
+        required: [true, 'Por favor ingrese una dirección']
+    },
     materiales: [
         {type: String, ref: 'Material'}
     ],
