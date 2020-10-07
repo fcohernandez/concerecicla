@@ -54,6 +54,8 @@ router.put('/:id', (req, res) => {
     let id = req.params.id
     let body = req.body
 
+    console.log(body)
+
     Usuario.findByIdAndUpdate(id, body, {new: true}, (err, usuarioDB) => {
         if(err){
             return res.status(400).json({

@@ -58,6 +58,8 @@ router.post('/', isAuthenticated, (req, res) => {
         puntuacion: body.puntuacion
     })
 
+    console.log(body)
+
     comentario.save( (err, comentarioDB) => {
         if(err){
             return res.status(400).json({

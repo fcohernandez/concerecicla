@@ -42,10 +42,12 @@ router.post('/', (req, res) => {
                     err
                 })
             }
-
-            const token = jwt.sign({usuarioDB}, 'conceReciclaApp', {
+            console.log('usuario registrado', userDB)
+            const token = jwt.sign({userDB}, 'conceReciclaApp', {
                 expiresIn: 60*60*24*30
             });
+
+            console.log('token',token)
     
             return res.json({
                 ok: true,
