@@ -35,6 +35,11 @@ const Canasta = (props) => {
             materiales.push({material: "5", cantidad: organicCount})
         }
 
+        if(materiales.length < 1){
+            alert('Ingrese por lo menos 1 material a reciclar')
+            return
+        }
+
         //return Alert.alert(JSON.stringify(materiales))
 
         AsyncStorage.getItem('@token', (err, res) => {

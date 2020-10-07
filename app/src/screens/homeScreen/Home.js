@@ -22,6 +22,7 @@ const Home = () => {
 
     const [rating, setRating] = useState(0)
     const [descripcion, setDescripcion] = useState('')
+    const [token, setToken] = useState('')
 
     const dispatch = useDispatch()
 
@@ -33,6 +34,15 @@ const Home = () => {
         }
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);
+        AsyncStorage.getItem('@token',(err, res) => {
+          if(err){
+              console.log('error',err)
+          }
+
+          console.log('token', res)
+          setToken(res)
+        }) 
+        
       })()
       dispatch(fetchPoints())
       dispatch(fetchMaterials())
@@ -52,9 +62,23 @@ const Home = () => {
       setRating(rating)
     }
 
-    const postComentario = () => {
+    const closeModal = () => {
+      setModalComentario(false)
+      setDescripcion('')
+      setRating(0)
+    }
 
-      AsyncStorage.getItem('@token', (err, res) => {
+    const postComentario = () => {
+     
+      if(descripcion == ''){
+        alert('Ingrese un comentario válido')
+        return
+      }
+      if(rating == 0){
+        alert('Por favor indique una puntuación')
+        return
+      }
+        
         fetch(`http://192.168.18.169:3000/comentario`, {
                 method: 'POST',
                 headers: {
@@ -62,7 +86,7 @@ const Home = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    token: res,
+                    token,
                     puntoId: point._id,
                     descripcion,
                     puntuacion: rating
@@ -100,9 +124,11 @@ const Home = () => {
                         
                     }
                     dispatch(fetchPoints())
+                    setDescripcion('')
+                    setRating(0)
                 })
                 })
-      })
+     
       
     }
 
@@ -110,8 +136,6 @@ const Home = () => {
     let puntos = useSelector(state => state.pointsReducer.puntos)
     
     let comentarios = useSelector(state => state.commentsReducer.comentarios)
-
-    console.log(puntos)
 
     return(
       <View style = {styles.container}>
@@ -124,7 +148,6 @@ const Home = () => {
                         longitude: location.coords.longitude,
                         latitudeDelta: 0.025,
                         longitudeDelta: 0.025}}
-                    onPress = {(e)=>test(e)}
                 >
                 {
                   puntos.map(punto => {
@@ -181,10 +204,22 @@ const Home = () => {
                         </View>
                         <View style = {{backgroundColor: '#95c52d', borderRadius: 18, marginLeft: 10, marginRight: 10,paddingBottom: 10, marginTop: 10}}>
                           <View style={{ marginTop: 10, marginLeft: 10, marginRight: 10}}>
-                            <Text style={{fontWeight: 'bold', fontSize: 14, color: '#fff'}}> Dirección: {point.descripcion}</Text>
+                            <Text style={{fontWeight: 'bold', fontSize: 14, color: '#fff'}}> Dirección: O'Higgins 821</Text>
                           </View>
                           <View style={{flexDirection: 'row', marginLeft: 10}}>
-                            <Text style = {{color: '#fff', fontWeight: 'bold'}}>Materiales: asdsa asdas asdasd asddsa</Text>
+                          <Text style = {{color: '#fff', fontWeight: 'bold'}}>Materiales: </Text>
+                            {point.materiales&&point.materiales.map(material => {
+                                if(material == 1)
+                                 return <Text key={material} style = {{color: '#fff', fontWeight: 'bold'}}>Plásticos </Text>
+                                if(material == 2)
+                                  return <Text key={material} style = {{color: '#fff', fontWeight: 'bold'}}>Papel </Text>
+                                if(material == 3)
+                                  return <Text key={material} style = {{color: '#fff', fontWeight: 'bold'}}>Vidrios </Text>
+                                if(material == 4)
+                                  return <Text key={material} style = {{color: '#fff', fontWeight: 'bold'}}>Baterías </Text>
+                                if(material == 5)
+                                  return <Text key={material} style = {{color: '#fff', fontWeight: 'bold'}}>Orgánicos </Text>
+                            })}
                           </View>
                           <View style={{flexDirection: 'row', marginLeft: 10}}>
                             <Text style = {{color: '#fff', fontWeight: 'bold'}}>Horario: 18:00-20:00</Text>
@@ -220,7 +255,7 @@ const Home = () => {
                   <View style={{flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: '#00000080'}}>
                     <View style={{width: 300,height: 400, backgroundColor: '#fff', borderRadius: 18}}>
                       <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10, marginTop: 10}}>
-                          <TouchableOpacity onPress={() => setModalComentario(false)}>   
+                          <TouchableOpacity onPress={() => closeModal()}>   
                             <FontAwesome5 name="window-close" color={'#333'} size={36} />
                           </TouchableOpacity>
                       </View>
@@ -241,7 +276,7 @@ const Home = () => {
 
                       <AirbnbRating
                           count={10}
-                          reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Very Good", "Wow", "Amazing", "Unbelievable", "Jesus"]}
+                          reviews={["Malísimo", "Malo", "Medianamente Malo", "OK", "Bueno", "Muy bueno", "Buenisimo", "Increible", "Asombroso", "Excelente!"]}
                           defaultRating={rating}
                           size={20}
                           reviewSize= {20}

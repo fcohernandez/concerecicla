@@ -23,6 +23,7 @@ const User = ({navigation}) => {
             setApellido(userInfo.apellido)
             setUserId(userInfo._id)
             setAdmin(userInfo.admin)
+            setEdad(String(userInfo.edad))
         })
     },[])
 
@@ -40,6 +41,7 @@ const User = ({navigation}) => {
             body: JSON.stringify({
                 nombre,
                 apellido,
+                edad
             })
         })
         .then(response => response.json())  // promise
